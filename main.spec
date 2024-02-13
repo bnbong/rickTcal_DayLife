@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('images/static/silfirdance.gif', '.')],
+    datas=[('images/static/rim.gif', '.'), ('images/static/rimbolddagu.gif', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -34,5 +34,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['images\\static\\rickTcal.ico'],
+    icon=['images/static/rickTcal.ico'],
 )
