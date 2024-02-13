@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt6.QtWidgets import QApplication, QLabel, QWidget
 from PyQt6.QtCore import Qt, QRect, QSize
@@ -14,7 +15,12 @@ class rickTcal(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
 
-        gif_path = "static/silfirdance.gif"
+        if getattr(sys, 'frozen', False):
+            application_path = sys._MEIPASS
+        else:
+            application_path = os.path.dirname(os.path.abspath(__file__)) + "/images/static/"
+
+        gif_path = os.path.join(application_path, 'silfirdance.gif')
 
         self.label = QLabel(self)
         self.movie = QMovie(gif_path)

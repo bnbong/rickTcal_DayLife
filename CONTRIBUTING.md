@@ -20,8 +20,8 @@
 ## 배포 실행 파일 생성 방법
 
 실행 파일 아이콘 :
-- MacOS 용 : [rickTcal.icns](./src/static/rickTcal.icns)
-- Windows 용 : [rickTcal.ico](./src/static/rickTcal.ico)
+- MacOS 용 : [rickTcal.icns](images/static/rickTcal.icns)
+- Windows 용 : [rickTcal.ico](images/static/rickTcal.ico)
 
 ### 0. pyinstaller 설치
 ```bash
@@ -36,15 +36,19 @@ $ pip install -r requirements.txt
 
 
 ### 1. 명렁어 실행
- - 실행 파일 생성(MacOS 개발 환경에서)
+ - 실행 파일 생성
 ```bash
 # 프로젝트 루트에서,
 
-$ pyinstaller --onefile --windowed --icon=src/static/rickTcal.icns src/main.py
+$ pyinstaller main.spec
 ```
- - 실행 파일 생성(Windows 개발 환경에서)
+ - 실행 파일 생성(.spec 파일 재생성하여 빌드, 웬만하면 실행하지 말 것.)
 ```bash
 # 프로젝트 루트에서,
 
+# MacOS 환경
+$ pyinstaller --onefile --windowed --icon=src/static/rickTcal.icns src/main.py
+
+# Windows 환경
 $ pyinstaller --onefile --windowed --icon=src/static/rickTcal.ico src/main.py
 ```

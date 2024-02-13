@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['src/main.py'],
+    ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('images/static/silfirdance.gif', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -34,11 +34,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['src/static/rickTcal.icns'],
-)
-app = BUNDLE(
-    exe,
-    name='main.app',
-    icon='src/static/rickTcal.icns',
-    bundle_identifier=None,
+    icon=['images\\static\\rickTcal.ico'],
 )
