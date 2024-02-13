@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "ricktcal-daylife"
+version = "0.1.0"
+description = "볼따구 라이프로 스트레스를 줄여주는 데스크톱 앱"
+authors = ["bnbong <bbbong9@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.11.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
