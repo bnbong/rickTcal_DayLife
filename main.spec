@@ -5,7 +5,9 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('images/static/rim.gif', '.'), ('images/static/rimbolddagu.gif', '.')],
+    datas=[
+        ('images/*', '.'),
+    ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

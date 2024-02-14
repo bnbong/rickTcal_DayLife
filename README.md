@@ -38,4 +38,3 @@
 
  - Python 3.11.1
  - PyQT6
- - PyQT Designer
