@@ -1,15 +1,13 @@
 # CONTRIBUTING
 
 ## PR / Issue 작성 방법
-추가 예정
+추가 예정 (TODO: Issue template도 찾아보기)
 
 ## 개발 환경 설정 방법
 
 1. Python 3.11 설치
 2. PyQT6 설치
-3. PyQT Designer 설치
-4. PyQT Designer 실행
-5. 프로젝트 파일 열기
+3. 프로젝트 파일 열기
 
 또는 로컬에 Poetry가 설치되어 있을 시, (poetry로 의존성 관리 예정)
     
@@ -42,7 +40,7 @@ $ pip install -r requirements.txt
 
 $ pyinstaller main.spec
 ```
- - 실행 파일 생성(.spec 파일 재생성하여 빌드, 웬만하면 실행하지 말 것.)
+ - 빌드 설정 초기화 및 새로운 실행 파일 생성(웬만하면 실행하지 말 것.)
 ```bash
 # 프로젝트 루트에서,
 
