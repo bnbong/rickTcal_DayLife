@@ -1,0 +1,27 @@
+{
+  "butter": {
+    "bolddagu_x": 30,
+    "bolddagu_y": 80,
+    "description": "버터의 설명"
+  },
+  "rim": {
+    "bolddagu_x": 33,
+    "bolddagu_y": 13,
+    "description": "림의 설명"
+  },
+  "vivi": {
+    "bolddagu_x": 28,
+    "bolddagu_y": 75,
+    "description": "비비의 설명"
+  },
+  "erpin": {
+    "bolddagu_x": 35,
+    "bolddagu_y": 65,
+    "description": "에르핀의 설명"
+  },
+  "silpir": {
+    "bolddagu_x": 32,
+    "bolddagu_y": 60,
+    "description": "실피르의 설명"
+  }
+}
