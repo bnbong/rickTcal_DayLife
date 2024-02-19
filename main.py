@@ -2,6 +2,12 @@
 # --------------------------------------------------------------------------
 # 릭트컬 - 데이라이프 데스크톱 앱의 메인 스크립트입니다.
 #
+# GLOBAL VARs
+# - occupied_positions : 사도의 위치를 계산하는 데 사용되는 글로벌 리스트입니다.
+# - players : 사도 위젯 플레이어를 관리하는 데 사용되는 글로벌 리스트입니다.
+# - global_bolddagu_sound : 볼따구 당길 때 재생되는 QSoundEffect 글로벌 객체입니다.
+# - global_bolddagu_ouch_sound : 볼따구 놓을 때 재생되는 QSoundEffect 글로벌 객체입니다.
+#
 # @author bnbong bbbong9@gmail.com
 # --------------------------------------------------------------------------
 import os
@@ -10,7 +16,7 @@ import sys
 import json
 import glob
 
-from PyQt6.QtGui import QIcon, QMovie
+from PyQt6.QtGui import QIcon, QMovie, QFontDatabase, QFont
 from PyQt6.QtCore import Qt, QSize, QTimer, QUrl, QPoint, pyqtSignal
 from PyQt6.QtMultimedia import QSoundEffect
 from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel
@@ -18,10 +24,10 @@ from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLa
 from sado_info import SadoDescriptionDialog
 
 # GLOBAL VARs
-occupied_positions = []  # 사도의 위치를 계산하는 데 사용되는 글로벌 변수
-players = []  # 위젯 플레이어 글로벌 변수
-global_bolddagu_sound = QSoundEffect()  # 볼따구 당길 때 재생되는 효과음 글로벌 참조 변수
-global_bolddagu_ouch_sound = QSoundEffect()  # 볼따구 놓을 때 재생되는 효과음 글로벌 참조 변수
+occupied_positions = []
+players = []
+global_bolddagu_sound = QSoundEffect()
+global_bolddagu_ouch_sound = QSoundEffect()
 
 
 def initialize_global_resources(application_path):
@@ -190,7 +196,7 @@ class MainWindow(QWidget):
     def showSadoDescription(self):
         # 사도 설명 대화 상자 표시
         current_index = 0
-        dialog = SadoDescriptionDialog(self.sado_data, current_index, self)
+        dialog = SadoDescriptionDialog(self.sado_data, current_index, self, title_font, description_font)
         dialog.addCurrentSado.connect(self.addSado)
         dialog.exec()
 
@@ -220,8 +226,8 @@ class MainWindow(QWidget):
         self.sadoIconButton.setIconSize(iconSize)
 
         screen = QApplication.primaryScreen().geometry()
-        rightMargin = 10  # 우측 마진
-        bottomMargin = 10  # 하단 마진
+        rightMargin = 30  # 우측 마진
+        bottomMargin = 70  # 하단 마진
 
         buttonWidth = iconSize.width()
         buttonHeight = iconSize.height()
@@ -230,14 +236,17 @@ class MainWindow(QWidget):
         x = screen.width() - buttonWidth - rightMargin
         y = screen.height() - buttonHeight - bottomMargin
 
-        # TODO: 이 부분이 제대로 동작 안하는 듯
-        self.sadoIconButton.move(x, y)
+        self.setGeometry(x, y, 10, 10)
 
 
 if __name__ == "__main__":
-    """캐릭터(사도) 정보는 sado_name 리스트에 다음과 같은 형식으로 저장됩니다:
+    """캐릭터(사도) 정보는 sado.json 파일에 다음과 같은 형식으로 저장됩니다:
 
-    ("캐릭터(사도)이름", "볼따구 x 범위(픽셀)", "볼따구 y 범위(픽셀)")
+    "<사도 이름>" : {
+        "bolddagu_x": int  # 볼따구의 x 범위 입니다.
+        "bolddagu_y": int  # 볼따구의 y 범위 입니다.
+        "description": str # 사도에 대한 설명 입니다.
+    }
     """
     app = QApplication(sys.argv)
 
@@ -246,15 +255,33 @@ if __name__ == "__main__":
     else:
         application_path = os.path.dirname(os.path.abspath(__file__))
 
+    # 커스텀 폰트 적용
+    titleFontPath = "fonts/Katuri.ttf"
+    descriptionFontPath = "fonts/ONE MOBILE POP.ttf"
+
+    titleFontId = QFontDatabase.addApplicationFont(titleFontPath)
+    descriptionFontId = QFontDatabase.addApplicationFont(descriptionFontPath)
+
+    titleFontFamily = QFontDatabase.applicationFontFamilies(titleFontId)[0]
+    descriptionFontFamily = QFontDatabase.applicationFontFamilies(descriptionFontId)[0]
+
+    title_font = QFont(titleFontFamily, 12)
+    description_font = QFont(descriptionFontFamily, 10)
+    description_font.setBold(False)
+
+    # 사도 데이터 로드
     json_path = os.path.join(application_path, "sado_test.json")
     with open(json_path, "r", encoding="utf-8") as file:
         sado_data = json.load(file)
 
+    # 글로벌 참조 로드
     initialize_global_resources(application_path)
 
+    # 캐릭터(사도) 설명 위젯 추가
     mainWindow = MainWindow()
     mainWindow.show()
 
+    # 캐릭터(사도) 로드
     # ~ Version 1.0 초기 캐릭터(사도) 5종 : 버터, 에르핀, 비비, 림, 실피르
     for sado_name, sado_info in sado_data.items():
         player = rickTcal(
