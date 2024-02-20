@@ -92,6 +92,7 @@ class rickTcal(QWidget):
         self.timer.stop()  # 타이머 정지
 
     def mousePressEvent(self, event):
+        # TODO: 머리 부분을 잡아서 사도를 옮기는 기능 추가
         BOLDDAGU_WIDTH = self.sado_bolddagu_width
         BOLDDAGU_HEIGHT = self.sado_bolddagu_height
 
@@ -112,6 +113,11 @@ class rickTcal(QWidget):
                 self.movie.start()
 
                 global_bolddagu_sound.play()
+
+        if half_width - 30 < click_x < half_width + 30 and 0 < click_y < 30:
+            # TODO: 사도 캐릭터 크기 조정, 머리 위치 개선
+            if event.button() == Qt.MouseButton.LeftButton:
+                print("Head grabbed")
 
         # 사도를 우클릭하면 삭제
         if event.button() == Qt.MouseButton.RightButton:
@@ -142,7 +148,6 @@ class rickTcal(QWidget):
         # 바탕화면 바닥에 사도를 배치하기 위한 y 좌표 계산
         y = screen.height() - height - 50  # 작업 표시줄 등을 고려하여 여유 공간을 둠
 
-        # 겹치지 않는 랜덤 x 좌표를 찾을 때까지 반복
         while True:
             x = random.randint(0, screen.width() - width)
             new_pos = QPoint(x, y)
@@ -256,18 +261,25 @@ if __name__ == "__main__":
         application_path = os.path.dirname(os.path.abspath(__file__))
 
     # 커스텀 폰트 적용
-    titleFontPath = "fonts/Katuri.ttf"
-    descriptionFontPath = "fonts/ONE MOBILE POP.ttf"
+    titleFontPath = application_path + "/fonts/Katuri.ttf"
+    descriptionFontPath = application_path + "/fonts/ONE MOBILE POP.ttf"
 
-    titleFontId = QFontDatabase.addApplicationFont(titleFontPath)
-    descriptionFontId = QFontDatabase.addApplicationFont(descriptionFontPath)
-
-    titleFontFamily = QFontDatabase.applicationFontFamilies(titleFontId)[0]
-    descriptionFontFamily = QFontDatabase.applicationFontFamilies(descriptionFontId)[0]
-
-    title_font = QFont(titleFontFamily, 12)
-    description_font = QFont(descriptionFontFamily, 10)
+    title_font = QFont('Arial', 12)
+    description_font = QFont('Arial', 10)
     description_font.setBold(False)
+
+    if not os.path.exists(titleFontPath) or not os.path.exists(descriptionFontPath):
+        print("Font file not found.")
+    else:
+        titleFontId = QFontDatabase.addApplicationFont(titleFontPath)
+        descriptionFontId = QFontDatabase.addApplicationFont(descriptionFontPath)
+        if titleFontId == -1 or descriptionFontId == -1:
+            print("Failed to load font.")
+        else:
+            titleFontFamily = QFontDatabase.applicationFontFamilies(titleFontId)[0]
+            descriptionFontFamily = QFontDatabase.applicationFontFamilies(descriptionFontId)[0]
+            title_font = QFont(titleFontFamily, 12)
+            description_font = QFont(descriptionFontFamily, 10)
 
     # 사도 데이터 로드
     json_path = os.path.join(application_path, "sado_test.json")
