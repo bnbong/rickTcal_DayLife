@@ -6,13 +6,5 @@
     "oneline_description": "친구 좋아좋아",
     "species": "수인",
     "tall": 50
-  },
-  "vivi": {
-    "bolddagu_x": 28,
-    "bolddagu_y": 75,
-    "description": "비비의 설명",
-    "oneline_description": "비비 한줄 설명",
-    "species": "용족",
-    "tall": 50
   }
 }

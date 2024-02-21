@@ -92,7 +92,6 @@ class rickTcal(QWidget):
         self.timer.stop()  # 타이머 정지
 
     def mousePressEvent(self, event):
-        # TODO: 머리 부분을 잡아서 사도를 옮기는 기능 추가
         BOLDDAGU_WIDTH = self.sado_bolddagu_width
         BOLDDAGU_HEIGHT = self.sado_bolddagu_height
 
@@ -113,11 +112,6 @@ class rickTcal(QWidget):
                 self.movie.start()
 
                 global_bolddagu_sound.play()
-
-        if half_width - 30 < click_x < half_width + 30 and 0 < click_y < 30:
-            # TODO: 사도 캐릭터 크기 조정, 머리 위치 개선
-            if event.button() == Qt.MouseButton.LeftButton:
-                print("Head grabbed")
 
         # 사도를 우클릭하면 삭제
         if event.button() == Qt.MouseButton.RightButton:
