@@ -1,12 +1,5 @@
-# TODO: 사도 설명 다이얼로그 레이아웃 수정
 # --------------------------------------------------------------------------
-# 릭트컬 - 데이라이프 데스크톱 앱의 메인 스크립트입니다.
-#
-# GLOBAL VARs
-# - occupied_positions : 사도의 위치를 계산하는 데 사용되는 글로벌 리스트입니다.
-# - players : 사도 위젯 플레이어를 관리하는 데 사용되는 글로벌 리스트입니다.
-# - global_bolddagu_sound : 볼따구 당길 때 재생되는 QSoundEffect 글로벌 객체입니다.
-# - global_bolddagu_ouch_sound : 볼따구 놓을 때 재생되는 QSoundEffect 글로벌 객체입니다.
+# 사도들의 애니메이션 정상 재생 여부 확인, 볼따구 픽셀 범위 위치를 찾는 테스트 모듈입니다.
 #
 # @author bnbong bbbong9@gmail.com
 # --------------------------------------------------------------------------
@@ -16,27 +9,17 @@ import sys
 import json
 import glob
 
-from PyQt6.QtGui import QIcon, QMovie, QFontDatabase, QFont
-from PyQt6.QtCore import Qt, QSize, QTimer, QUrl, QPoint, pyqtSignal
-from PyQt6.QtMultimedia import QSoundEffect
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel
+from PyQt6.QtGui import QMovie
+from PyQt6.QtCore import Qt, QSize, QTimer, QPoint, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel
 
-from sado_info import SadoDescriptionDialog
 
 # GLOBAL VARs
 occupied_positions = []
 players = []
-global_bolddagu_sound = QSoundEffect()
-global_bolddagu_ouch_sound = QSoundEffect()
 
 
-def initialize_global_resources(application_path):
-    sound_path = application_path + "/sounds/"
-    global_bolddagu_sound.setSource(QUrl.fromLocalFile(sound_path + "bolddagu.wav"))
-    global_bolddagu_ouch_sound.setSource(QUrl.fromLocalFile(sound_path + "ouch.wav"))
-
-
-class rickTcal(QWidget):
+class rickTcal_test(QWidget):
     """
     캐릭터(사도) 위젯 클래스입니다.
     볼따구를 잡아당기면 잡고 있는 동안 볼따구 애니메이션이 재생되고 볼따구를 놓으면 놀란 표정의 애니메이션이 재생됩니다.
@@ -116,6 +99,7 @@ class rickTcal(QWidget):
         self.bolddagu_timer.stop()
 
     def mousePressEvent(self, event):
+        print("current bolddagu position data: ", self.sado_bolddagu_width, self.sado_bolddagu_height)  # for debugging
         BOLDDAGU_WIDTH = self.sado_bolddagu_width
         BOLDDAGU_HEIGHT = self.sado_bolddagu_height
 
@@ -127,14 +111,13 @@ class rickTcal(QWidget):
             BOLDDAGU_HEIGHT - 10
         ) < click_y < (BOLDDAGU_HEIGHT + 10):
             if event.button() == Qt.MouseButton.LeftButton:
+                print("clicked position:", click_x, click_y)  # for debugging
                 self.clicked_on_bolddaggu = True
                 self.movie.stop()
                 self.movie.setFileName(self.clicked_gif_path)
                 self.movie.start()
 
                 self.standing_timer.stop()
-
-                global_bolddagu_sound.play()
 
         # 사도를 우클릭하면 삭제
         if event.button() == Qt.MouseButton.RightButton:
@@ -148,14 +131,18 @@ class rickTcal(QWidget):
             self.movie.setFileName(self.bolddagu_after_gif_path)
             self.movie.start()
 
-            global_bolddagu_ouch_sound.play()
-
             # 2초 뒤에 원래의 GIF로 되돌아가기 위해 타이머를 시작.
             self.bolddagu_timer.start()
             self.standing_timer.start()
 
     def changeStandingMotion(self):
-        next_gif_path = random.choice(self.standing_gifs)
+        # 현재 재생 중인 GIF가 standing_gifs 리스트에 있다면, 다음 GIF로 변경
+        if self.movie.fileName() in self.standing_gifs:
+            current_index = self.standing_gifs.index(self.movie.fileName())
+            next_index = (current_index + 1) % len(self.standing_gifs)  # idle 애니메이션 리스트를 순환
+            next_gif_path = self.standing_gifs[next_index]
+        else:
+            next_gif_path = self.standing_gifs[0]
         print(next_gif_path)  # for debugging
 
         self.movie.stop()
@@ -163,7 +150,6 @@ class rickTcal(QWidget):
         self.movie.start()
 
     def adjustWindowSize(self):
-        # TODO: occupied_positions 알고리즘 개선 필요
         screen = QApplication.primaryScreen().geometry()
         width = 200  # 사도 위젯의 너비
         height = 200  # 사도 위젯의 높이
@@ -197,141 +183,19 @@ class rickTcal(QWidget):
         super().closeEvent(event)
 
 
-class MainWindow(QWidget):
-    """
-    메인 창 클래스입니다.
-    우측 하단의 사도 아이콘 버튼을 클릭하면 사도 설명 다이얼로그 창이 나타납니다.
-    해당 창에서 사도에 대한 설명을 확인할 수 있고 화면에 해당 사도를 소환할 수 있으며 rickTcal 데스크톱 앱을 끌 수 있는 버튼이 있습니다.
-    """
-    def __init__(self):
-        super().__init__()
-        self.sado_data = sado_data
-
-        self.layout = QVBoxLayout(self)
-        self.initUI()
-
-    def initUI(self):
-        # 사도들의 설명 위젯 추가
-        sado_info_icon = application_path + "/images/static/sado_icon.png"
-
-        self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
-        )
-        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
-
-        self.sadoIconButton = QPushButton(QIcon(sado_info_icon), "")
-        self.sadoIconButton.clicked.connect(self.showSadoDescription)
-
-        # 사도들의 설명 위젯은 투명한 버튼으로 화면에 표시.
-        self.sadoIconButton.setStyleSheet(
-            "background-color: transparent; border: none;"
-        )
-
-        self.adjustWindowSize()
-
-        self.layout.addWidget(self.sadoIconButton)
-
-    def showSadoDescription(self):
-        # 사도 설명 대화 상자 표시
-        current_index = 0
-        dialog = SadoDescriptionDialog(
-            self.sado_data, current_index, self, title_font, description_font
-        )
-        dialog.addCurrentSado.connect(self.addSado)
-        dialog.exec()
-
-    def addSado(self, sado_name):
-        # 사도를 화면에 추가하는 로직
-        sado_info = self.sado_data.get(sado_name)
-        if not sado_info:
-            print(f"{sado_name} 정보를 찾을 수 없습니다.")
-            return
-
-        player = rickTcal(
-            application_path=application_path,
-            sado_name=sado_name,
-            bolddagu_x=sado_info["bolddagu_x"],
-            bolddagu_y=sado_info["bolddagu_y"],
-        )
-        player.closed.connect(lambda: self.removePlayer(player))
-        player.show()
-        players.append(player)
-
-    def removePlayer(self, player):
-        player.deleteLater()  # QWidget의 deleteLater 메서드를 사용하여 리소스 해제
-        players.remove(player)  # players 리스트에서 해당 인스턴스 제거
-
-    def adjustWindowSize(self):
-        iconSize = QSize(50, 50)  # 아이콘 크기 설정
-        self.sadoIconButton.setIconSize(iconSize)
-
-        screen = QApplication.primaryScreen().geometry()
-        rightMargin = 30  # 우측 마진
-        bottomMargin = 70  # 하단 마진
-
-        buttonWidth = iconSize.width()
-        buttonHeight = iconSize.height()
-
-        # 버튼 위치 계산: 화면의 우측 하단
-        x = screen.width() - buttonWidth - rightMargin
-        y = screen.height() - buttonHeight - bottomMargin
-
-        self.setGeometry(x, y, 10, 10)
-
-
 if __name__ == "__main__":
-    """
-    rickTcal 데스크톱 앱의 메인 로직들을 실행합니다.
-    
-    캐릭터(사도) 정보가 저장되는 sado.json 파일의 구조는 CONTRIBUTION.md 파일을 참조해주세요.
-    """
     app = QApplication(sys.argv)
 
-    if getattr(sys, "frozen", False):  # production, development 환경 구분
-        application_path = sys._MEIPASS
-    else:
-        application_path = os.path.dirname(os.path.abspath(__file__))
-
-    # 커스텀 폰트 적용
-    titleFontPath = application_path + "/fonts/Katuri.ttf"
-    descriptionFontPath = application_path + "/fonts/ONE MOBILE POP.ttf"
-
-    title_font = QFont("Arial", 12)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
-    description_font = QFont("Arial", 10)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
-    description_font.setBold(False)
-
-    if not os.path.exists(titleFontPath) or not os.path.exists(descriptionFontPath):
-        print("Font file not found.")
-    else:
-        titleFontId = QFontDatabase.addApplicationFont(titleFontPath)
-        descriptionFontId = QFontDatabase.addApplicationFont(descriptionFontPath)
-        if titleFontId == -1 or descriptionFontId == -1:
-            print("Failed to load font.")
-        else:
-            titleFontFamily = QFontDatabase.applicationFontFamilies(titleFontId)[0]
-            descriptionFontFamily = QFontDatabase.applicationFontFamilies(
-                descriptionFontId
-            )[0]
-            title_font = QFont(titleFontFamily, 12)
-            description_font = QFont(descriptionFontFamily, 10)
+    application_path = os.path.dirname(os.path.abspath(__file__))
 
     # 사도 데이터 로드
-    json_path = os.path.join(application_path, "sado_test.json")  # 사도 데이터 파일 경로 (배포)
+    json_path = os.path.join(application_path, "sado_test.json")  # 사도 데이터 파일 경로 (테스트)
     with open(json_path, "r", encoding="utf-8") as file:
         sado_data = json.load(file)
 
-    # 글로벌 참조 로드
-    initialize_global_resources(application_path)
-
-    # 캐릭터(사도) 설명 위젯 추가
-    mainWindow = MainWindow()
-    mainWindow.show()
-
     # 캐릭터(사도) 로드
-    # ~ Version 1.0 초기 캐릭터(사도) 5종 : 버터, 에르핀, 비비, 림, 실피르
     for sado_name, sado_info in sado_data.items():
-        player = rickTcal(
+        player = rickTcal_test(
             application_path=application_path,
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],

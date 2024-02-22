@@ -11,14 +11,22 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QLabel,
     QPushButton,
-    QHBoxLayout, QApplication,
+    QHBoxLayout,
+    QApplication,
 )
 
 
 class SadoDescriptionDialog(QDialog):
     addCurrentSado = pyqtSignal(str)  # 현재 설명을 보고 있는 사도 이름을 전달하는 신호
 
-    def __init__(self, sado_data, current_index, parent=None, titleFont=None, descriptionFont=None):
+    def __init__(
+        self,
+        sado_data,
+        current_index,
+        parent=None,
+        titleFont=None,
+        descriptionFont=None,
+    ):
         super().__init__(parent)
         self.sado_data = sado_data
         self.current_index = current_index
@@ -82,7 +90,9 @@ class SadoDescriptionDialog(QDialog):
     def updateDescription(self):
         sado_name = list(self.sado_data.keys())[self.current_index]
         pixmap = QPixmap(f"images/static/{sado_name}/{sado_name}_icon.png")
-        self.imageLabel.setPixmap(pixmap.scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio))
+        self.imageLabel.setPixmap(
+            pixmap.scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio)
+        )
 
         self.descriptionLabel.setText(
             f"{sado_name}: {self.sado_data[sado_name]['description']}"
