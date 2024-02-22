@@ -24,9 +24,9 @@
 ### 기능
 1. **볼따구 잡아당기는 기능**
 
-| 인게임                                    | 릭트컬 - 데이라이프 |
-|----------------------------------------|-------------|
-| ![bolddagu.gif](./images/bolddagu.gif) | (GIF 추가 예정) |
+| 인게임                                    | 릭트컬 - 데이라이프                                |
+|----------------------------------------|--------------------------------------------|
+| <br/><img src="./images/bolddagu.gif" alt="bolddagu" style="width: 200px; height: auto;"> | <img src="./images/butterouch.gif" alt="butterbolddagu" style="width: 200px; height: auto;"> |
 
 핵심 기능인 사도의 볼따구를 잡아당기는 기능입니다.
 
