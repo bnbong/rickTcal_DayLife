@@ -1,4 +1,4 @@
-# TODO: 사도 설명 다이얼로그 레이아웃 수정
+# ignore: N801, N802
 # --------------------------------------------------------------------------
 # 릭트컬 - 데이라이프 데스크톱 앱의 메인 스크립트입니다.
 #
@@ -30,7 +30,7 @@ global_bolddagu_sound = QSoundEffect()
 global_bolddagu_ouch_sound = QSoundEffect()
 
 
-def initialize_global_resources(application_path):
+def initialize_global_resources(application_path: str):
     sound_path = application_path + "/sounds/"
     global_bolddagu_sound.setSource(QUrl.fromLocalFile(sound_path + "bolddagu.wav"))
     global_bolddagu_ouch_sound.setSource(QUrl.fromLocalFile(sound_path + "ouch.wav"))
@@ -60,11 +60,21 @@ class rickTcal(QWidget):
     def __init__(self, application_path, sado_name, bolddagu_x, bolddagu_y):
         super().__init__()
 
+        self.setWindowFlags(
+            Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
+        )
+        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
+
+        self.label = QLabel(self)
+        self.movie = QMovie()
+
         image_path = application_path + "/images/static/"
 
         sado_name = sado_name
         self.sado_bolddagu_width = bolddagu_x
         self.sado_bolddagu_height = bolddagu_y
+        self.sado_position = QPoint()
 
         self.clicked_on_bolddaggu = False
 
@@ -94,17 +104,11 @@ class rickTcal(QWidget):
         self.standing_timer.start()
 
     def initUI(self):
-        self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
-        self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
-        )
-
-        self.label = QLabel(self)
         self.movie = QMovie(self.original_gif_path)
         self.label.setMovie(self.movie)
 
         self.movie.setScaledSize(QSize(200, 200))
+
         self.movie.start()
 
         self.adjustWindowSize()
@@ -124,7 +128,7 @@ class rickTcal(QWidget):
 
         # 볼이 당겨지는 애니메이션은 캐릭터(사도)의 볼따구 부분 근처에서 발생하도록 함.
         if (BOLDDAGU_WIDTH - 10) < click_x < (BOLDDAGU_WIDTH + 10) and (
-            BOLDDAGU_HEIGHT - 10
+                BOLDDAGU_HEIGHT - 10
         ) < click_y < (BOLDDAGU_HEIGHT + 10):
             if event.button() == Qt.MouseButton.LeftButton:
                 self.clicked_on_bolddaggu = True
@@ -156,45 +160,62 @@ class rickTcal(QWidget):
 
     def changeStandingMotion(self):
         next_gif_path = random.choice(self.standing_gifs)
-        print(next_gif_path)  # for debugging
 
         self.movie.stop()
         self.movie.setFileName(next_gif_path)
         self.movie.start()
 
     def adjustWindowSize(self):
-        # TODO: occupied_positions 알고리즘 개선 필요
         screen = QApplication.primaryScreen().geometry()
         width = 200  # 사도 위젯의 너비
         height = 200  # 사도 위젯의 높이
 
-        # 바탕화면 바닥에 사도를 배치하기 위한 y 좌표 계산
         y = screen.height() - height - 50  # 작업 표시줄 등을 고려하여 여유 공간을 둠
+        max_attempts = 100  # 겹치지 않는 위치를 찾기 위한 최대 시도 횟수
 
-        while True:
+        for _ in range(max_attempts):
             x = random.randint(0, screen.width() - width)
             new_pos = QPoint(x, y)
-            if not any(
-                pos.x() == new_pos.x() and pos.y() == new_pos.y()
+
+            # 겹치는지 확인
+            overlapping = any(
+                new_pos.x() < pos.x() + width and
+                new_pos.x() + width > pos.x()
                 for pos in occupied_positions
-            ):
+            )
+
+            if not overlapping:
+                print("finding position attempt:", _ + 1)  # for debugging
+                self.sado_position = new_pos
+                occupied_positions.append(self.sado_position)
+                self.setFixedSize(width, height)
+                self.move(self.sado_position)
                 break
-
-        # 새로운 위치를 차지한 것으로 표시
-        occupied_positions.append(new_pos)
-
-        self.setFixedSize(width, height)
-        self.move(x, y)
+        else:
+            # 최대 시도 횟수를 초과하여 겹치지 않는 위치를 찾지 못한 경우
+            print("사도를 배치할 적절한 위치를 찾지 못했습니다.")
+            self.sado_position = QPoint(200, y)  # default position
+            occupied_positions.append(self.sado_position)
+            self.setFixedSize(width, height)
+            self.move(self.sado_position)
 
     def closeEvent(self, event):
         print("close event!")  # for debugging
         if self.bolddagu_timer.isActive():
             self.bolddagu_timer.stop()
+        self.bolddagu_timer.deleteLater()
         if self.standing_timer.isActive():
             self.standing_timer.stop()
+        self.standing_timer.deleteLater()
 
         self.closed.emit()  # 위젯이 닫힐 때 closed 신호 발생
+        players.remove(self)
+        occupied_positions.remove(self.sado_position)
+        self.deleteLater()  # rickTcal 객체 명시적 삭제
+
         super().closeEvent(event)
+        print("deleted!:", players)  # for debugging
+        print("occupied positions:", occupied_positions)  # for debugging
 
 
 class MainWindow(QWidget):
@@ -203,6 +224,7 @@ class MainWindow(QWidget):
     우측 하단의 사도 아이콘 버튼을 클릭하면 사도 설명 다이얼로그 창이 나타납니다.
     해당 창에서 사도에 대한 설명을 확인할 수 있고 화면에 해당 사도를 소환할 수 있으며 rickTcal 데스크톱 앱을 끌 수 있는 버튼이 있습니다.
     """
+
     def __init__(self):
         super().__init__()
         self.sado_data = sado_data
@@ -242,6 +264,12 @@ class MainWindow(QWidget):
         dialog.exec()
 
     def addSado(self, sado_name):
+        print("addSado before:", players)  # for debugging
+        # 화면에 사도 위젯이 3개 이상일 때 추가하지 않음 (성능 이슈 방지 목적)
+        if len(players) >= 3:
+            print("화면에 띄울 수 있는 사도의 최대 수에 도달했습니다.")
+            return
+
         # 사도를 화면에 추가하는 로직
         sado_info = self.sado_data.get(sado_name)
         if not sado_info:
@@ -254,13 +282,10 @@ class MainWindow(QWidget):
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
         )
-        player.closed.connect(lambda: self.removePlayer(player))
         player.show()
         players.append(player)
-
-    def removePlayer(self, player):
-        player.deleteLater()  # QWidget의 deleteLater 메서드를 사용하여 리소스 해제
-        players.remove(player)  # players 리스트에서 해당 인스턴스 제거
+        print("addSado after:", players)  # for debugging
+        print("occupied positions:", occupied_positions)  # for debugging
 
     def adjustWindowSize(self):
         iconSize = QSize(50, 50)  # 아이콘 크기 설정
@@ -330,6 +355,7 @@ if __name__ == "__main__":
 
     # 캐릭터(사도) 로드
     # ~ Version 1.0 초기 캐릭터(사도) 5종 : 버터, 에르핀, 비비, 림, 실피르
+    # TODO: 사도 5종 추가 완료 후 최대 사도 배치 수 3개로 제한
     for sado_name, sado_info in sado_data.items():
         player = rickTcal(
             application_path=application_path,
@@ -339,5 +365,7 @@ if __name__ == "__main__":
         )
         player.show()
         players.append(player)
-
+        print(sado_name, ":", player)  # for debugging
+    print("rickTcal players:", players)  # for debugging
+    print("occupied positions:", occupied_positions)  # for debugging
     sys.exit(app.exec())

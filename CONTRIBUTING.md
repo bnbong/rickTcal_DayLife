@@ -5,7 +5,37 @@
 
 ## PR / Issue 작성 방법
 
-추가 예정 (TODO: Issue template도 찾아보기)
+### Issue Reporting
+
+rickTcal_DayLife github 저장소 상단의 Issues 탭을 눌러 그동안 생성된 이슈들을 볼 수 있으며 새로운 이슈를 생성할 수 있습니다.
+
+![issue1](images/issue_1.png)
+
+rickTcal_DayLife 프로젝트가 제공하는 template로 이슈를 작성할 수 있습니다.
+
+이슈를 생성하기 위해 먼저, 우측의 New issue 버튼을 누릅니다.
+
+![issue2](images/issue_2.png)
+
+그리고 나타나는 화면에서, 원하는 이슈 template을 선택한 후, 이슈를 작성합니다.
+
+template을 선택하면 다음과 같이 이슈를 작성할 수 있는 양식이 화면이 나타납니다.
+
+![issue3](images/issue_3.png)
+
+만약, template를 사용하지 않고 자유롭게 이슈를 작성하고 싶으시다면,
+
+![issue2](images/issue_2.png)
+
+template 선택창 하단의 [Open a blank issue](https://github.com/bnbong/rickTcal_DayLife/issues/new) 버튼을 눌러 자유 양식의 이슈를 작성할 수 있습니다.
+
+![issue4](images/issue_4.png)
+
+### Pull Request
+
+PR의 경우, Issue Reporting과 동일하게 rickTcal_DayLife 저장소가 제공하는 template로 PR을 작성할 수 있습니다.
+
+PR을 보낼 부모 저장소의 **main 브랜치**로 PR을 보내주시면 됩니다.
 
 ## 번역
 
@@ -13,9 +43,11 @@
 
 ## 사도 추가
 
-추가 예정
+추가 예정 (사도 GIF 픽셀 크기 등)
 
 # 코드 기여
+
+먼저 해당 저장소를 포크한 후, 포크한 저장소에서 작업을 진행합니다.
 
 ## 개발 환경 설정 방법
 
