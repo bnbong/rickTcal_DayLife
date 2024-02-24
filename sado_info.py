@@ -5,15 +5,16 @@
 #
 # @author bnbong bbbong9@gmail.com
 # --------------------------------------------------------------------------
-from PyQt6.QtCore import pyqtSignal, Qt
-from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtCore import pyqtSignal, Qt, QSize
+from PyQt6.QtGui import QPixmap, QIcon, QColor, QBrush, QPalette
 from PyQt6.QtWidgets import (
     QDialog,
     QVBoxLayout,
     QLabel,
     QPushButton,
     QHBoxLayout,
-    QApplication
+    QApplication,
+    QGraphicsDropShadowEffect, QWidget,
 )
 
 
@@ -47,6 +48,7 @@ class SadoDescriptionDialog(QDialog):
         self.initUI()
 
     def initUI(self):
+        # TODO: 세로 레이아웃을 적용시킬 위젯을 새로 만들어서 크기를 FIX.
         self.setWindowTitle("사도 설명")
 
         # 메인 레이아웃
@@ -100,32 +102,51 @@ class SadoDescriptionDialog(QDialog):
         self.quitButton.clicked.connect(QApplication.instance().quit)
         navLayout.addWidget(self.quitButton)
 
+        # TODO: 사도 종족 별 배경 화면 변경
+        # 배경화면 적용
+        backgroundpixmap = (QPixmap("images/static/backgrounds/suin.png")).scaled(
+            QSize(100, 100), Qt.AspectRatioMode.KeepAspectRatio
+        )
+        brush = QBrush(backgroundpixmap)
+        palette = self.palette()
+        palette.setBrush(QPalette.ColorRole.Window, brush)
+        self.setPalette(palette)
+
+        self.descriptionLabel.setStyleSheet(
+            """
+            QLabel {
+                border-width: 20px;
+                border-image: url('images/static/backgrounds/description.png');
+            }
+        """
+        )
+
+        # 레이아웃 적용
         descriptionLayout.addLayout(navLayout)
 
         layout.addLayout(nameLabelLayout)
         layout.addLayout(descriptionLayout)
-
-        # TODO: 사도 종족 별 배경 화면 변경
-        self.setStyleSheet("background: #000000;")
 
         self.setLayout(layout)
         self.updateDescription()
 
     def updateDescription(self):
         sado_name = list(self.sado_data.keys())[self.current_index]
-        pixmap = QPixmap(f"images/static/{sado_name}/{sado_name}_icon.png").scaled(100, 100)
+        pixmap = QPixmap(f"images/static/{sado_name}/{sado_name}_icon.png").scaled(
+            100, 100
+        )
 
         # TMI 라벨에 oneline_description을 설정합니다.
-        self.tmiLabel.setText(f"TMI\n\n{self.sado_data[sado_name]['oneline_description']}")
+        self.tmiLabel.setText(
+            f"TMI\n\n{self.sado_data[sado_name]['oneline_description']}"
+        )
 
         # 이미지 라벨의 크기를 고정합니다.
         self.imageLabel.setFixedSize(100, 100)
 
         self.imageLabel.setPixmap(pixmap)
         self.nameLabel.setText(sado_name)
-        self.descriptionLabel.setText(
-            f"{self.sado_data[sado_name]['description']}"
-        )
+        self.descriptionLabel.setText(f"{self.sado_data[sado_name]['description']}")
 
     def showPrevDescription(self):
         self.current_index = (self.current_index - 1) % len(self.sado_data)

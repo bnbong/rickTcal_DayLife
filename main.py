@@ -55,6 +55,7 @@ class rickTcal(QWidget):
     self.sado_bolddagu_width : 캐릭터(사도)의 볼따구 x 좌표입니다. (사도 JSON 데이터 파일에서 가져옴)
     self.sado_bolddagu_height : 캐릭터(사도)의 볼따구 y 좌표입니다. (사도 JSON 데이터 파일에서 가져옴)
     """
+
     closed = pyqtSignal()  # 위젯이 닫힐 때 발생할 신호
 
     def __init__(self, application_path, sado_name, bolddagu_x, bolddagu_y):
@@ -128,7 +129,7 @@ class rickTcal(QWidget):
 
         # 볼이 당겨지는 애니메이션은 캐릭터(사도)의 볼따구 부분 근처에서 발생하도록 함.
         if (BOLDDAGU_WIDTH - 10) < click_x < (BOLDDAGU_WIDTH + 10) and (
-                BOLDDAGU_HEIGHT - 10
+            BOLDDAGU_HEIGHT - 10
         ) < click_y < (BOLDDAGU_HEIGHT + 10):
             if event.button() == Qt.MouseButton.LeftButton:
                 self.clicked_on_bolddaggu = True
@@ -179,8 +180,7 @@ class rickTcal(QWidget):
 
             # 겹치는지 확인
             overlapping = any(
-                new_pos.x() < pos.x() + width and
-                new_pos.x() + width > pos.x()
+                new_pos.x() < pos.x() + width and new_pos.x() + width > pos.x()
                 for pos in occupied_positions
             )
 
@@ -227,22 +227,22 @@ class MainWindow(QWidget):
 
     def __init__(self):
         super().__init__()
+        sado_info_icon = application_path + "/images/static/sado_icon.png"
         self.sado_data = sado_data
 
         self.layout = QVBoxLayout(self)
+        self.sadoIconButton = QPushButton(QIcon(sado_info_icon), "")
+
         self.initUI()
 
     def initUI(self):
         # 사도들의 설명 위젯 추가
-        sado_info_icon = application_path + "/images/static/sado_icon.png"
-
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
         )
         self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
 
-        self.sadoIconButton = QPushButton(QIcon(sado_info_icon), "")
         self.sadoIconButton.clicked.connect(self.showSadoDescription)
 
         # 사도들의 설명 위젯은 투명한 버튼으로 화면에 표시.
@@ -308,7 +308,7 @@ class MainWindow(QWidget):
 if __name__ == "__main__":
     """
     rickTcal 데스크톱 앱의 메인 로직들을 실행합니다.
-    
+
     캐릭터(사도) 정보가 저장되는 sado.json 파일의 구조는 CONTRIBUTION.md 파일을 참조해주세요.
     """
     app = QApplication(sys.argv)
@@ -323,7 +323,9 @@ if __name__ == "__main__":
     descriptionFontPath = application_path + "/fonts/ONE MOBILE POP.ttf"
 
     title_font = QFont("Arial", 12)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
-    description_font = QFont("Arial", 10)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
+    description_font = QFont(
+        "Arial", 10
+    )  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
     description_font.setBold(False)
 
     if not os.path.exists(titleFontPath) or not os.path.exists(descriptionFontPath):
@@ -342,7 +344,9 @@ if __name__ == "__main__":
             description_font = QFont(descriptionFontFamily, 10)
 
     # 사도 데이터 로드
-    json_path = os.path.join(application_path, "sado_test.json")  # 사도 데이터 파일 경로 (배포)
+    json_path = os.path.join(
+        application_path, "sado_test.json"
+    )  # 사도 데이터 파일 경로 (배포)
     with open(json_path, "r", encoding="utf-8") as file:
         sado_data = json.load(file)
 

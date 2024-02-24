@@ -38,6 +38,7 @@ class rickTcal_test(QWidget):
     self.sado_bolddagu_width : 캐릭터(사도)의 볼따구 x 좌표입니다. (사도 JSON 데이터 파일에서 가져옴)
     self.sado_bolddagu_height : 캐릭터(사도)의 볼따구 y 좌표입니다. (사도 JSON 데이터 파일에서 가져옴)
     """
+
     closed = pyqtSignal()  # 위젯이 닫힐 때 발생할 신호
 
     def __init__(self, application_path, sado_name, bolddagu_x, bolddagu_y):
@@ -99,7 +100,11 @@ class rickTcal_test(QWidget):
         self.bolddagu_timer.stop()
 
     def mousePressEvent(self, event):
-        print("current bolddagu position data: ", self.sado_bolddagu_width, self.sado_bolddagu_height)  # for debugging
+        print(
+            "current bolddagu position data: ",
+            self.sado_bolddagu_width,
+            self.sado_bolddagu_height,
+        )  # for debugging
         BOLDDAGU_WIDTH = self.sado_bolddagu_width
         BOLDDAGU_HEIGHT = self.sado_bolddagu_height
 
@@ -139,7 +144,9 @@ class rickTcal_test(QWidget):
         # 현재 재생 중인 GIF가 standing_gifs 리스트에 있다면, 다음 GIF로 변경
         if self.movie.fileName() in self.standing_gifs:
             current_index = self.standing_gifs.index(self.movie.fileName())
-            next_index = (current_index + 1) % len(self.standing_gifs)  # idle 애니메이션 리스트를 순환
+            next_index = (current_index + 1) % len(
+                self.standing_gifs
+            )  # idle 애니메이션 리스트를 순환
             next_gif_path = self.standing_gifs[next_index]
         else:
             next_gif_path = self.standing_gifs[0]
@@ -189,7 +196,9 @@ if __name__ == "__main__":
     application_path = os.path.dirname(os.path.abspath(__file__))
 
     # 사도 데이터 로드
-    json_path = os.path.join(application_path, "sado_test.json")  # 사도 데이터 파일 경로 (테스트)
+    json_path = os.path.join(
+        application_path, "sado_test.json"
+    )  # 사도 데이터 파일 경로 (테스트)
     with open(json_path, "r", encoding="utf-8") as file:
         sado_data = json.load(file)
 
