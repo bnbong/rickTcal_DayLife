@@ -18,6 +18,17 @@ from PyQt6.QtWidgets import (
 )
 
 
+SPECIES_BACKGROUND_MAP = {
+    "수인": "suin.png",
+    "요정": "fairy.png",
+    "용족": "dragon.png",
+    "엘프": "elf.png",
+    "유령": "ghost.png",
+    "마녀": "witch.png",
+    "정령": "spirit.png",
+}
+
+
 class SadoDescriptionDialog(QDialog):
     addCurrentSado = pyqtSignal(str)  # 현재 설명을 보고 있는 사도 이름을 전달하는 신호
 
@@ -102,16 +113,6 @@ class SadoDescriptionDialog(QDialog):
         self.quitButton.clicked.connect(QApplication.instance().quit)
         navLayout.addWidget(self.quitButton)
 
-        # TODO: 사도 종족 별 배경 화면 변경
-        # 배경화면 적용
-        backgroundpixmap = (QPixmap("images/static/backgrounds/suin.png")).scaled(
-            QSize(100, 100), Qt.AspectRatioMode.KeepAspectRatio
-        )
-        brush = QBrush(backgroundpixmap)
-        palette = self.palette()
-        palette.setBrush(QPalette.ColorRole.Window, brush)
-        self.setPalette(palette)
-
         self.descriptionLabel.setStyleSheet(
             """
             QLabel {
@@ -132,6 +133,12 @@ class SadoDescriptionDialog(QDialog):
 
     def updateDescription(self):
         sado_name = list(self.sado_data.keys())[self.current_index]
+        species = self.sado_data[sado_name].get('species')
+
+        background_image = SPECIES_BACKGROUND_MAP.get(species, "suin.png")
+        self.setBackgroundImage(background_image)
+
+        # 사도 대표 이미지
         pixmap = QPixmap(f"images/static/{sado_name}/{sado_name}_icon.png").scaled(
             100, 100
         )
@@ -147,6 +154,16 @@ class SadoDescriptionDialog(QDialog):
         self.imageLabel.setPixmap(pixmap)
         self.nameLabel.setText(sado_name)
         self.descriptionLabel.setText(f"{self.sado_data[sado_name]['description']}")
+
+    def setBackgroundImage(self, image_file):
+        backgroundpixmap = (QPixmap(f"images/static/backgrounds/{image_file}")).scaled(
+            QSize(100, 100), Qt.AspectRatioMode.KeepAspectRatio
+        )
+        brush = QBrush(backgroundpixmap)
+        palette = QPalette()
+        palette.setBrush(QPalette.ColorRole.Window, brush)
+        self.setPalette(palette)
+        self.setAutoFillBackground(True)
 
     def showPrevDescription(self):
         self.current_index = (self.current_index - 1) % len(self.sado_data)

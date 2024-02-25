@@ -22,5 +22,21 @@
     "oneline_description": "용족 성골 귀족",
     "species": "용족",
     "tall": 70
+  },
+  "silfir": {
+    "bolddagu_x": 75,
+    "bolddagu_y": 110,
+    "description": "실피르 설명",
+    "oneline_description": "자존심이 밥 먹여준다",
+    "species": "용족",
+    "tall": 70
+  },
+  "rim": {
+    "bolddagu_x": 70,
+    "bolddagu_y": 110,
+    "description": "림 설명",
+    "oneline_description": "썰렁개그 권위자",
+    "species": "유령",
+    "tall": 70
   }
 }

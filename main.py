@@ -359,8 +359,8 @@ if __name__ == "__main__":
 
     # 캐릭터(사도) 로드
     # ~ Version 1.0 초기 캐릭터(사도) 5종 : 버터, 에르핀, 비비, 림, 실피르
-    # TODO: 사도 5종 추가 완료 후 최대 사도 배치 수 3개로 제한
-    for sado_name, sado_info in sado_data.items():
+    selected_sados = random.sample(list(sado_data.items()), 3)
+    for sado_name, sado_info in selected_sados:
         player = rickTcal(
             application_path=application_path,
             sado_name=sado_name,
