@@ -2,11 +2,14 @@
 
 
 a = Analysis(
-    ['main.py'],
+    ['main.py', 'sado_info.py'],
     pathex=[],
     binaries=[],
     datas=[
-        ('images/*', '.'),
+        ('images', 'images'),
+        ('fonts', 'fonts'),
+        ('sounds', 'sounds'),
+        ('sado.json', '.'),
     ],
     hiddenimports=[],
     hookspath=[],
@@ -24,13 +27,13 @@ exe = EXE(
     a.datas,
     [],
     name='rickTcal',
-    debug=False,
+    debug=True,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=False,
+    console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,

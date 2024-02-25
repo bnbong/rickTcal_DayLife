@@ -5,6 +5,8 @@
 #
 # @author bnbong bbbong9@gmail.com
 # --------------------------------------------------------------------------
+import os
+
 from PyQt6.QtCore import pyqtSignal, Qt, QSize
 from PyQt6.QtGui import QPixmap, QIcon, QColor, QBrush, QPalette
 from PyQt6.QtWidgets import (
@@ -36,6 +38,7 @@ class SadoDescriptionDialog(QDialog):
         self,
         sado_data,
         current_index,
+        application_path,
         parent=None,
         titleFont=None,
         descriptionFont=None,
@@ -45,7 +48,9 @@ class SadoDescriptionDialog(QDialog):
         self.current_index = current_index
         self.titleFont = titleFont
         self.descriptionFont = descriptionFont
-        self.quitIcon = QIcon("images/static/quit_icon.png")
+        self.application_path = application_path
+        self.image_path = os.path.join(self.application_path, "images", "static")
+        self.quitIcon = QIcon(os.path.join(self.image_path, "quit_icon.png"))
 
         self.tmiLabel = QLabel("TMI")
         self.nameLabel = QLabel("사도 이름")
@@ -139,7 +144,8 @@ class SadoDescriptionDialog(QDialog):
         self.setBackgroundImage(background_image)
 
         # 사도 대표 이미지
-        pixmap = QPixmap(f"images/static/{sado_name}/{sado_name}_icon.png").scaled(
+        print("sado", os.path.join(self.image_path, f"{sado_name}", f"{sado_name}_icon.png"))
+        pixmap = QPixmap(os.path.join(self.image_path, f"{sado_name}", f"{sado_name}_icon.png")).scaled(
             100, 100
         )
 
@@ -156,7 +162,8 @@ class SadoDescriptionDialog(QDialog):
         self.descriptionLabel.setText(f"{self.sado_data[sado_name]['description']}")
 
     def setBackgroundImage(self, image_file):
-        backgroundpixmap = (QPixmap(f"images/static/backgrounds/{image_file}")).scaled(
+        print("backgrounds", os.path.join(self.image_path, "backgrounds", f"{image_file}"))
+        backgroundpixmap = (QPixmap(os.path.join(self.image_path, "backgrounds", f"{image_file}"))).scaled(
             QSize(100, 100), Qt.AspectRatioMode.KeepAspectRatio
         )
         brush = QBrush(backgroundpixmap)

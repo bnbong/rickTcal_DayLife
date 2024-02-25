@@ -1,42 +1,11 @@
 {
-  "butter": {
-    "bolddagu_x": 70,
-    "bolddagu_y": 110,
-    "description": "수인 마을에서 거주하는 강아지 수인. \n\n굉장히 사교적이고 상냥한 성격이기 때문에 대가 없이 주변인들을 무제한적으로 도와주는 천사같은 성격이지만, \n\n엘리아스에는 착한 사람보다는 이상한 사람이 더 많다보니 무리한 요구를 받거나 불합리하게 놀림을 당하는 등 호구 취급도 많이 겪는다. \n\n하지만 아무리 놀림당하고 괴롭힘당해도 화 한 번 안 내고 웃으면서 주변인들을 돕는 착한 성격 덕에 악순환이 생기기도 하나 \n\n교주나 평소에 수인을 무시하는 칸나에게도 귀여움을 받기도 한다.",
-    "oneline_description": "친구 좋아좋아",
-    "species": "수인",
-    "tall": 50
-  },
-  "erpin": {
-    "bolddagu_x": 70,
-    "bolddagu_y": 100,
-    "description": "엘리아스의 세계수를 수호하는 요정 왕국 에르피엔의 여왕. \n\n그러나 에르피엔의 최고 우두머리라는 막중한 직책과는 정 반대로 무식함의 대명사인 데다 책임감이 없으며 허당 끼가 다분하다. \n\n심지어는 에르핀을 잘 아는 인물들 사이에서 에르핀의 이름을 바보의 동의어로 쓸 정도로, \n\n그야말로 루머 속 마리 앙투아네트를 빼다 박은 듯한 무능한 여왕이다.",
-    "oneline_description": "요정 여왕",
-    "species": "요정",
-    "tall": 60
-  },
-  "vivi": {
-    "bolddagu_x": 70,
-    "bolddagu_y": 75,
-    "description": "엘리아스의 지하 불길과 물길의 터에 자리를 잡고 있는 용족 중 한 명으로, 은의 용족을 자칭하고 있다.\n\n다른 용족과 달리 비비는 영원살이 용족이지만 만성 감기를 항상 달고 살고 있다.\n\n먼 옛날 용족의 우두머리인 다야에게 거둬져 키워졌다.",
-    "oneline_description": "용족 성골 귀족",
-    "species": "용족",
-    "tall": 70
-  },
-  "silfir": {
-    "bolddagu_x": 75,
-    "bolddagu_y": 110,
-    "description": "실피르 설명",
-    "oneline_description": "자존심이 밥 먹여준다",
-    "species": "용족",
-    "tall": 70
-  },
   "rim": {
     "bolddagu_x": 70,
     "bolddagu_y": 110,
     "description": "림 설명",
     "oneline_description": "썰렁개그 권위자",
     "species": "유령",
-    "tall": 70
+    "tall": 70,
+    "idle": 11
   }
 }

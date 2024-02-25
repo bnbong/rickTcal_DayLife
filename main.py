@@ -29,11 +29,16 @@ players = []
 global_bolddagu_sound = QSoundEffect()
 global_bolddagu_ouch_sound = QSoundEffect()
 
+if getattr(sys, "frozen", False):  # production, development 환경 구분
+    application_path = sys._MEIPASS
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__))
+
 
 def initialize_global_resources(application_path: str):
     sound_path = application_path + "/sounds/"
-    global_bolddagu_sound.setSource(QUrl.fromLocalFile(sound_path + "bolddagu.wav"))
-    global_bolddagu_ouch_sound.setSource(QUrl.fromLocalFile(sound_path + "ouch.wav"))
+    global_bolddagu_sound.setSource(QUrl.fromLocalFile(os.path.join(sound_path + "bolddagu.wav")))
+    global_bolddagu_ouch_sound.setSource(QUrl.fromLocalFile(os.path.join(sound_path + "ouch.wav")))
 
 
 class rickTcal(QWidget):
@@ -58,8 +63,10 @@ class rickTcal(QWidget):
 
     closed = pyqtSignal()  # 위젯이 닫힐 때 발생할 신호
 
-    def __init__(self, application_path, sado_name, bolddagu_x, bolddagu_y):
+    def __init__(self, sado_name, bolddagu_x, bolddagu_y, idle_len):
         super().__init__()
+
+        print("application path:", application_path)
 
         self.setWindowFlags(
             Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
@@ -70,26 +77,24 @@ class rickTcal(QWidget):
         self.label = QLabel(self)
         self.movie = QMovie()
 
-        image_path = application_path + "/images/static/"
-
-        sado_name = sado_name
+        self.sado_name = sado_name
         self.sado_bolddagu_width = bolddagu_x
         self.sado_bolddagu_height = bolddagu_y
+        self.idle_len = int(idle_len)
         self.sado_position = QPoint()
 
         self.clicked_on_bolddaggu = False
 
-        default_gif_path = os.path.join(image_path, f"{sado_name}/default/")
-        self.original_gif_path = os.path.join(
-            image_path, f"{sado_name}/default/{sado_name}.gif"
-        )
-        self.standing_gifs = glob.glob(f"{default_gif_path}*.gif")
-        self.clicked_gif_path = os.path.join(
-            image_path, f"{sado_name}/moving/{sado_name}bolddagu.gif"
-        )
-        self.bolddagu_after_gif_path = os.path.join(
-            image_path, f"{sado_name}/moving/{sado_name}bolddaguafter.gif"
-        )
+        image_path = os.path.join(application_path, "images", "static", self.sado_name, "default")
+        self.original_gif_path = os.path.join(image_path, f"{self.sado_name}0.gif")
+        self.standing_gifs = [
+            os.path.join(image_path, f"{self.sado_name}{i}.gif") for i in range(self.idle_len)
+        ]
+        print(self.standing_gifs)  # for debugging
+        self.clicked_gif_path = os.path.join(application_path, "images", "static", self.sado_name, "moving",
+                                             f"{self.sado_name}bolddagu.gif")
+        self.bolddagu_after_gif_path = os.path.join(application_path, "images", "static", self.sado_name, "moving",
+                                                    f"{self.sado_name}bolddaguafter.gif")
 
         self.initUI()
 
@@ -258,7 +263,7 @@ class MainWindow(QWidget):
         # 사도 설명 대화 상자 표시
         current_index = 0
         dialog = SadoDescriptionDialog(
-            self.sado_data, current_index, self, title_font, description_font
+            self.sado_data, current_index, application_path, self, title_font, description_font
         )
         dialog.addCurrentSado.connect(self.addSado)
         dialog.exec()
@@ -277,10 +282,10 @@ class MainWindow(QWidget):
             return
 
         player = rickTcal(
-            application_path=application_path,
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
+            idle_len=sado_info["idle"]
         )
         player.show()
         players.append(player)
@@ -313,11 +318,6 @@ if __name__ == "__main__":
     """
     app = QApplication(sys.argv)
 
-    if getattr(sys, "frozen", False):  # production, development 환경 구분
-        application_path = sys._MEIPASS
-    else:
-        application_path = os.path.dirname(os.path.abspath(__file__))
-
     # 커스텀 폰트 적용
     titleFontPath = application_path + "/fonts/Katuri.ttf"
     descriptionFontPath = application_path + "/fonts/ONE MOBILE POP.ttf"
@@ -345,7 +345,7 @@ if __name__ == "__main__":
 
     # 사도 데이터 로드
     json_path = os.path.join(
-        application_path, "sado_test.json"
+        application_path, "sado.json"
     )  # 사도 데이터 파일 경로 (배포)
     with open(json_path, "r", encoding="utf-8") as file:
         sado_data = json.load(file)
@@ -362,10 +362,10 @@ if __name__ == "__main__":
     selected_sados = random.sample(list(sado_data.items()), 3)
     for sado_name, sado_info in selected_sados:
         player = rickTcal(
-            application_path=application_path,
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
+            idle_len=sado_info["idle"]
         )
         player.show()
         players.append(player)
