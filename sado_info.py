@@ -1,4 +1,3 @@
-# TODO: 레이아웃 배경 추가
 # ignore: N801, N802, N806
 # --------------------------------------------------------------------------
 # 사도(캐릭터)에 대한 설명 위젯을 다루는 스크립트입니다.
@@ -107,7 +106,6 @@ class SadoDescriptionDialog(QDialog):
         nameLabelLayout.addWidget(self.nameLabel)
 
         # 사도 설명 라벨
-        # TODO: 설명 레이아웃 배경 추가
         descriptionLayout.addLayout(tmiLayout)
 
         self.descriptionLabel.setFont(self.descriptionFont)
@@ -132,9 +130,11 @@ class SadoDescriptionDialog(QDialog):
         self.quitButton.clicked.connect(QApplication.instance().quit)
         navLayout.addWidget(self.quitButton)
 
-        descriptionWidget = QWidget()  # 새로운 QWidget 인스턴스 생성
-        descriptionWidget.setLayout(descriptionLayout)  # descriptionLayout을 해당 위젯에 설정
+        descriptionWidget = QWidget()
+        descriptionWidget.setLayout(descriptionLayout)
 
+        # 레이아웃 스타일 적용
+        # version 1.0.1 TODO: description 배경 이미지가 제대로 적용이 안되는 현상 수정 (배포 버전에서)
         descriptionWidget.setStyleSheet("""
             QWidget {
                 border-width: 20px;
