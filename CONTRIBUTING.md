@@ -84,7 +84,11 @@ $ pip install -r requirements.txt
 ```bash
 # 프로젝트 루트에서,
 
-$ pyinstaller main.spec
+# Windows 환경
+$ pyinstaller build_window.spec
+
+# MacOS 환경
+$ pyinstaller build_macos.spec
 ```
  - 빌드 설정 초기화 및 새로운 실행 파일 생성(웬만하면 실행하지 말 것.)
 ```bash
