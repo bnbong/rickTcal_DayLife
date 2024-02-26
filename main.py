@@ -319,9 +319,9 @@ if __name__ == "__main__":
     titleFontPath = application_path + "/fonts/Katuri.ttf"
     descriptionFontPath = application_path + "/fonts/ONE MOBILE POP.ttf"
 
-    title_font = QFont("Arial", 12)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
+    title_font = QFont("Arial", 16)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
     description_font = QFont(
-        "Arial", 10
+        "Arial", 14
     )  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
     description_font.setBold(False)
 

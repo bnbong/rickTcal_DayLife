@@ -8,7 +8,7 @@
 import os
 
 from PyQt6.QtCore import pyqtSignal, Qt, QSize
-from PyQt6.QtGui import QPixmap, QIcon, QColor, QBrush, QPalette
+from PyQt6.QtGui import QPixmap, QIcon, QColor, QBrush, QPalette, QFont
 from PyQt6.QtWidgets import (
     QDialog,
     QVBoxLayout,
@@ -18,6 +18,14 @@ from PyQt6.QtWidgets import (
     QApplication,
     QGraphicsDropShadowEffect, QWidget,
 )
+
+SADO_NAME_MAP = {
+    "butter": "버터",
+    "silfir": "실피르",
+    "vivi": "비비",
+    "erpin": "에르핀",
+    "rim": "림"
+}
 
 
 SPECIES_BACKGROUND_MAP = {
@@ -52,10 +60,11 @@ class SadoDescriptionDialog(QDialog):
         self.image_path = os.path.join(self.application_path, "images", "static")
         self.quitIcon = QIcon(os.path.join(self.image_path, "quit_icon.png"))
 
-        self.tmiLabel = QLabel("TMI")
-        self.nameLabel = QLabel("사도 이름")
-        self.imageLabel = QLabel(self)
-        self.descriptionLabel = QLabel(self)
+        self.tmiLabel = QLabel("TMI")  # text
+        self.nameLabel = QLabel("사도 이름")  # text
+        self.iconLabel = QLabel(self)  # image
+        self.imageLabel = QLabel(self)  # image
+        self.descriptionLabel = QLabel(self)  # text
         self.addButton = QPushButton("현재 사도를 화면에 추가")
         self.prevButton = QPushButton("< 이전")
         self.nextButton = QPushButton("다음 >")
@@ -82,10 +91,15 @@ class SadoDescriptionDialog(QDialog):
         nameLabelLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # 사도 설명 & 네비게이션 버튼이 들어갈 세로 레이아웃
-        descriptionLayout = QVBoxLayout()
+        descriptionLayout = QVBoxLayout()  # 사도 설명 전체 레이아웃
         descriptionLayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        navLayout = QHBoxLayout()
+        tmiLayout = QHBoxLayout()  # TMI 레이아웃
+        tmiLayout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        tmiLayout.addWidget(self.iconLabel)
+        tmiLayout.addWidget(self.tmiLabel)
+
+        navLayout = QHBoxLayout()  # 네비게이션 버튼 레이아웃
         navLayout.setAlignment(Qt.AlignmentFlag.AlignBottom)
 
         # 사도 이미지 라벨
@@ -94,7 +108,7 @@ class SadoDescriptionDialog(QDialog):
 
         # 사도 설명 라벨
         # TODO: 설명 레이아웃 배경 추가
-        descriptionLayout.addWidget(self.tmiLabel)
+        descriptionLayout.addLayout(tmiLayout)
 
         self.descriptionLabel.setFont(self.descriptionFont)
         descriptionLayout.addWidget(self.descriptionLabel)
@@ -118,51 +132,59 @@ class SadoDescriptionDialog(QDialog):
         self.quitButton.clicked.connect(QApplication.instance().quit)
         navLayout.addWidget(self.quitButton)
 
-        self.descriptionLabel.setStyleSheet(
-            """
-            QLabel {
+        descriptionWidget = QWidget()  # 새로운 QWidget 인스턴스 생성
+        descriptionWidget.setLayout(descriptionLayout)  # descriptionLayout을 해당 위젯에 설정
+
+        descriptionWidget.setStyleSheet("""
+            QWidget {
                 border-width: 20px;
                 border-image: url('images/static/backgrounds/description.png');
             }
-        """
-        )
+        """)
+        self.tmiLabel.setStyleSheet("background-color: transparent; border-image: none;")
+        self.iconLabel.setStyleSheet("background-color: transparent; border-image: none;")
+        self.descriptionLabel.setStyleSheet("background-color: transparent; border-image: none;")
+        self.addButton.setStyleSheet("border-image: none;")
+        self.quitButton.setStyleSheet("border-image: none;")
+        self.nextButton.setStyleSheet("border-image: none;")
+        self.prevButton.setStyleSheet("border-image: none;")
 
         # 레이아웃 적용
         descriptionLayout.addLayout(navLayout)
 
         layout.addLayout(nameLabelLayout)
-        layout.addLayout(descriptionLayout)
+        layout.addWidget(descriptionWidget)
 
         self.setLayout(layout)
         self.updateDescription()
 
     def updateDescription(self):
         sado_name = list(self.sado_data.keys())[self.current_index]
+        sado_hangeul_name = SADO_NAME_MAP.get(sado_name)
         species = self.sado_data[sado_name].get('species')
 
         background_image = SPECIES_BACKGROUND_MAP.get(species, "suin.png")
         self.setBackgroundImage(background_image)
 
-        # 사도 대표 이미지
-        print("sado", os.path.join(self.image_path, f"{sado_name}", f"{sado_name}_icon.png"))
-        pixmap = QPixmap(os.path.join(self.image_path, f"{sado_name}", f"{sado_name}_icon.png")).scaled(
+        # 사도 이미지 로드
+        icon_pixmap = QPixmap(os.path.join(self.image_path, f"{sado_name}", f"{sado_name}_icon.png")).scaled(
             100, 100
         )
+        profile_pixmap = QPixmap(os.path.join(self.image_path, f"{sado_name}", f"{sado_name}_profile.png")).scaled(365, 512, Qt.AspectRatioMode.KeepAspectRatio)
+        sado_icon = QIcon(icon_pixmap)
+        self.setWindowIcon(sado_icon)
 
-        # TMI 라벨에 oneline_description을 설정합니다.
+        # TMI 라벨에 oneline_description을 설정.
         self.tmiLabel.setText(
             f"TMI\n\n{self.sado_data[sado_name]['oneline_description']}"
         )
 
-        # 이미지 라벨의 크기를 고정합니다.
-        self.imageLabel.setFixedSize(100, 100)
-
-        self.imageLabel.setPixmap(pixmap)
-        self.nameLabel.setText(sado_name)
+        self.iconLabel.setPixmap(icon_pixmap)
+        self.imageLabel.setPixmap(profile_pixmap)
+        self.nameLabel.setText(sado_hangeul_name)
         self.descriptionLabel.setText(f"{self.sado_data[sado_name]['description']}")
 
     def setBackgroundImage(self, image_file):
-        print("backgrounds", os.path.join(self.image_path, "backgrounds", f"{image_file}"))
         backgroundpixmap = (QPixmap(os.path.join(self.image_path, "backgrounds", f"{image_file}"))).scaled(
             QSize(100, 100), Qt.AspectRatioMode.KeepAspectRatio
         )
