@@ -50,16 +50,31 @@ class rickTcal_test(QWidget):
 
         self.clicked_on_bolddaggu = False
 
-        image_path = os.path.join(application_path, "images", "static", self.sado_name, "default")
+        image_path = os.path.join(
+            application_path, "images", "static", self.sado_name, "default"
+        )
         self.original_gif_path = os.path.join(image_path, f"{self.sado_name}0.gif")
         self.standing_gifs = [
-            os.path.join(image_path, f"{self.sado_name}{i}.gif") for i in range(self.idle_len)
+            os.path.join(image_path, f"{self.sado_name}{i}.gif")
+            for i in range(self.idle_len)
         ]
         print(self.standing_gifs)
-        self.clicked_gif_path = os.path.join(application_path, "images", "static", self.sado_name, "moving",
-                                             f"{self.sado_name}bolddagu.gif")
-        self.bolddagu_after_gif_path = os.path.join(application_path, "images", "static", self.sado_name, "moving",
-                                                    f"{self.sado_name}bolddaguafter.gif")
+        self.clicked_gif_path = os.path.join(
+            application_path,
+            "images",
+            "static",
+            self.sado_name,
+            "moving",
+            f"{self.sado_name}bolddagu.gif",
+        )
+        self.bolddagu_after_gif_path = os.path.join(
+            application_path,
+            "images",
+            "static",
+            self.sado_name,
+            "moving",
+            f"{self.sado_name}bolddaguafter.gif",
+        )
 
         self.initUI()
 
@@ -206,7 +221,7 @@ if __name__ == "__main__":
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
-            idle_len=sado_info["idle"]
+            idle_len=sado_info["idle"],
         )
         player.show()
         players.append(player)

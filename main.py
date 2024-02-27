@@ -37,8 +37,12 @@ else:
 
 def initialize_global_resources(application_path: str):
     sound_path = application_path + "/sounds/"
-    global_bolddagu_sound.setSource(QUrl.fromLocalFile(os.path.join(sound_path + "bolddagu.wav")))
-    global_bolddagu_ouch_sound.setSource(QUrl.fromLocalFile(os.path.join(sound_path + "ouch.wav")))
+    global_bolddagu_sound.setSource(
+        QUrl.fromLocalFile(os.path.join(sound_path + "bolddagu.wav"))
+    )
+    global_bolddagu_ouch_sound.setSource(
+        QUrl.fromLocalFile(os.path.join(sound_path + "ouch.wav"))
+    )
 
 
 class rickTcal(QWidget):
@@ -85,13 +89,27 @@ class rickTcal(QWidget):
 
         self.clicked_on_bolddaggu = False
 
-        image_path = os.path.join(application_path, "images", "static", self.sado_name, "default")
+        image_path = os.path.join(
+            application_path, "images", "static", self.sado_name, "default"
+        )
         self.original_gif_path = os.path.join(image_path, f"{self.sado_name}0.gif")
         self.standing_gifs = glob.glob(os.path.join(image_path, "*.gif"))
-        self.clicked_gif_path = os.path.join(application_path, "images", "static", self.sado_name, "moving",
-                                             f"{self.sado_name}bolddagu.gif")
-        self.bolddagu_after_gif_path = os.path.join(application_path, "images", "static", self.sado_name, "moving",
-                                                    f"{self.sado_name}bolddaguafter.gif")
+        self.clicked_gif_path = os.path.join(
+            application_path,
+            "images",
+            "static",
+            self.sado_name,
+            "moving",
+            f"{self.sado_name}bolddagu.gif",
+        )
+        self.bolddagu_after_gif_path = os.path.join(
+            application_path,
+            "images",
+            "static",
+            self.sado_name,
+            "moving",
+            f"{self.sado_name}bolddaguafter.gif",
+        )
 
         self.initUI()
 
@@ -260,13 +278,17 @@ class MainWindow(QWidget):
         # 사도 설명 대화 상자 표시
         current_index = 0
         dialog = SadoDescriptionDialog(
-            self.sado_data, current_index, application_path, self, title_font, description_font
+            self.sado_data,
+            current_index,
+            application_path,
+            self,
+            title_font,
+            description_font,
         )
         dialog.addCurrentSado.connect(self.addSado)
         dialog.exec()
 
     def addSado(self, sado_name):
-        print("addSado before:", players)  # for debugging
         # 화면에 사도 위젯이 3개 이상일 때 추가하지 않음 (성능 이슈 방지 목적)
         if len(players) >= 3:
             print("화면에 띄울 수 있는 사도의 최대 수에 도달했습니다.")
@@ -282,12 +304,10 @@ class MainWindow(QWidget):
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
-            idle_len=sado_info["idle"]
+            idle_len=sado_info["idle"],
         )
         player.show()
         players.append(player)
-        print("addSado after:", players)  # for debugging
-        print("occupied positions:", occupied_positions)  # for debugging
 
     def adjustWindowSize(self):
         iconSize = QSize(50, 50)  # 아이콘 크기 설정
@@ -319,9 +339,9 @@ if __name__ == "__main__":
     titleFontPath = application_path + "/fonts/Katuri.ttf"
     descriptionFontPath = application_path + "/fonts/ONE MOBILE POP.ttf"
 
-    title_font = QFont("Arial", 16)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
+    title_font = QFont("Arial", 20)  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
     description_font = QFont(
-        "Arial", 14
+        "Arial", 16
     )  # 커스텀 폰트 로드 실패 시, 기본 폰트 Arial로 설정
     description_font.setBold(False)
 
@@ -362,11 +382,9 @@ if __name__ == "__main__":
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
-            idle_len=sado_info["idle"]
+            idle_len=sado_info["idle"],
         )
         player.show()
         players.append(player)
-        print(sado_name, ":", player)  # for debugging
-    print("rickTcal players:", players)  # for debugging
-    print("occupied positions:", occupied_positions)  # for debugging
+
     sys.exit(app.exec())
