@@ -52,6 +52,10 @@
    - 관련 기사 - [링크](https://m.health.chosun.com/svc/news_view.html?contid=2023031701752)
  - 따라서 **자람 학회원을 포함한 릭트컬 데이라이프 데스크톱 앱을 사용하는 모든 사용자**에게 스트레스 해소, 창의력 및 기억력 증진 도모를 목표로 한다.
 
+### 설치 방법
+
+추가 예정
+
 ### 시연 영상
 
 [![rickTcal - DayLife 시연 영상](https://img.youtube.com/vi/CYAb9O3bSvQ/0.jpg)](https://youtu.be/CYAb9O3bSvQ)

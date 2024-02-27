@@ -146,14 +146,21 @@ class SadoDescriptionDialog(QDialog):
         descriptionWidget.setLayout(sadoLayout)
 
         # 레이아웃 스타일 적용
-        # version 1.0.1 TODO: description 배경 이미지가 제대로 적용이 안되는 현상 수정 (배포 버전에서)
         sadoLayout.setContentsMargins(50, 50, 50, 50)
 
         descriptionWidget.setStyleSheet(
             """
             QWidget {
                 border-width: 40px;
-                border-image: url('./images/static/backgrounds/description.png');
+                border-image: url('"""
+            + os.path.join(
+                self.application_path,
+                "images",
+                "static",
+                "backgrounds",
+                "description.png",
+            )
+            + """');
             }
         """
         )
