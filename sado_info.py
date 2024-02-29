@@ -148,6 +148,7 @@ class SadoDescriptionDialog(QDialog):
         # 레이아웃 스타일 적용
         sadoLayout.setContentsMargins(50, 50, 50, 50)
 
+        # TODO: 윈도우 빌드에서 background 이미지를 불러오지 못하는 문제 해결 필요
         descriptionWidget.setStyleSheet(
             """
             QWidget {
