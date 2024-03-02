@@ -177,7 +177,7 @@ class SadoDescriptionDialog(QDialog):
         self.descriptionLabel.setStyleSheet(
             "background-color: transparent; "
             "border-image: none; color : black; "
-            "max-width: 400px; min-height: 200px; font-size: 15px;"
+            "max-width: 400px; min-height: 250px; font-size: 15px;"
         )
         self.imageLabel.setStyleSheet("border-image: none;")
         self.addButton.setStyleSheet("color : black;")
