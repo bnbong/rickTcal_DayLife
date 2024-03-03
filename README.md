@@ -54,7 +54,25 @@
 
 ### 설치 방법
 
-추가 예정
+rickTcal 저장소 메인 페이지 우측에 Releases 탭을 클릭하면, 해당 프로젝트의 릴리즈 페이지로 이동할 수 있습니다.
+
+![install_1.png](./images/install_1.png)
+
+> 또는 다음 링크로 릴리즈 페이지로 이동할 수 있습니다 :https://github.com/bnbong/rickTcal_DayLife/releases
+
+릴리즈 페이지에서 여러 버전의 릭트컬 데이라이프 앱을 설치할 수 있으며,
+최신 버전의 릭트컬 데이라이프 앱을 다운로드 받으려면 초록색 `Latest` 태그가 붙은 버전을 찾으면 됩니다.
+
+![install_2.png](images%2Finstall_2.png)
+
+원하는 버전에서 하단의 Assets 섹션을 펼치면, 해당 버전의 릭트컬 데이라이프 앱을 다운로드 받을 수 있는 파일들이 나타납니다.
+
+여러분의 운영체제에 맞는 파일을 다운로드 받아 설치하면 됩니다.
+
+| 운영체제    | 파일명 |
+|---------|---|
+| Windows | `rickTcal.exe` |
+| MacOS   | `rickTcal.dmg` |
 
 ### 시연 영상
 
