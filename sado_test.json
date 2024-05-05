@@ -1,0 +1,11 @@
+{
+  "rim": {
+    "bolddagu_x": 70,
+    "bolddagu_y": 110,
+    "description": "림 설명",
+    "oneline_description": "썰렁개그 권위자",
+    "species": "유령",
+    "tall": 70,
+    "idle": 11
+  }
+}
