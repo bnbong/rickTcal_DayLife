@@ -92,7 +92,6 @@ class rickTcal(QWidget):
 
         self.clicked_on_bolddaggu = False
         self.dragged_sado=False
-        self.drag_start_pos=(0,0)
 
         image_path = os.path.join(
             application_path, "images", "static", self.sado_name, "default"
