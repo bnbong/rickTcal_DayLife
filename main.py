@@ -186,9 +186,9 @@ class rickTcal(QWidget):
         new_pos = (e.position().toPoint()#상대적 위치에
                     +self.sado_position#현재 위치를 더해서 절대적 위치로 바꾸고
                     -QPoint(self.sado_head_x,self.sado_head_y))#머리 위치 보정
-        occupied_positions.remove(self.sado_position)
+        occupied_positions.remove(self.sado_position)#기존 위치 삭제
         self.sado_position = new_pos
-        occupied_positions.append(self.sado_position)
+        occupied_positions.append(self.sado_position)#새로운 위치 넣기
         self.move(self.sado_position)
     def mouseReleaseEvent(self, event):
         if self.clicked_on_bolddaggu:
