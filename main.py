@@ -68,13 +68,13 @@ class rickTcal(QWidget):
 
     closed = pyqtSignal()  # 위젯이 닫힐 때 발생할 신호
 
-    def __init__(self, sado_name, bolddagu_x, bolddagu_y, idle_len):
+    def __init__(self, sado_name, bolddagu_x, bolddagu_y, head_x, head_y, idle_len):
         super().__init__()
 
         print("application path:", application_path)
 
         self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint
+            Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint#Qt.WindowType.FramelessWindowHint
         )
         self.setAttribute(Qt.WidgetAttribute.WA_NoSystemBackground, True)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
@@ -85,10 +85,13 @@ class rickTcal(QWidget):
         self.sado_name = sado_name
         self.sado_bolddagu_width = bolddagu_x
         self.sado_bolddagu_height = bolddagu_y
+        self.sado_head_x = head_x
+        self.sado_head_y = head_y
         self.idle_len = int(idle_len)
-        self.sado_position = QPoint()
+        self.sado_position = QPoint() 
 
         self.clicked_on_bolddaggu = False
+        self.dragged_sado=False
 
         image_path = os.path.join(
             application_path, "images", "static", self.sado_name, "default"
@@ -145,6 +148,9 @@ class rickTcal(QWidget):
         BOLDDAGU_WIDTH = self.sado_bolddagu_width
         BOLDDAGU_HEIGHT = self.sado_bolddagu_height
 
+        HEAD_WIDTH=self.sado_head_x
+        HEAD_HEIGHT=self.sado_head_y
+
         click_x = event.position().x()
         click_y = event.position().y()
 
@@ -161,11 +167,28 @@ class rickTcal(QWidget):
                 self.standing_timer.stop()
 
                 global_bolddagu_sound.play()
+        #위와 비슷하게 사도를 드래그하는 것은 사도의 머리 근처에서 발생하도록 함.
+        elif (HEAD_WIDTH - 70) < click_x < (HEAD_WIDTH + 70) and (
+            HEAD_HEIGHT - 25
+        ) < click_y < (HEAD_HEIGHT + 25):
+            if event.button() == Qt.MouseButton.LeftButton:
+                self.dragged_sado = True
 
         # 사도를 우클릭하면 삭제
         if event.button() == Qt.MouseButton.RightButton:
             self.close()
-
+    def mouseMoveEvent(self, e):
+        if not self.dragged_sado:#드래그 중이 아닌 상태면 아무것도 하지 않는다.
+            return
+        width = 200  # 사도 위젯의 너비
+        height = 200  # 사도 위젯의 높이
+        new_pos = (e.position().toPoint()#상대적 위치에
+                    +self.sado_position#현재 위치를 더해서 절대적 위치로 바꾸고
+                    -QPoint(self.sado_head_x,self.sado_head_y))#머리 위치 보정
+        occupied_positions.remove(self.sado_position)#기존 위치 삭제
+        self.sado_position = new_pos
+        occupied_positions.append(self.sado_position)#새로운 위치 넣기
+        self.move(self.sado_position)
     def mouseReleaseEvent(self, event):
         if self.clicked_on_bolddaggu:
             self.clicked_on_bolddaggu = False
@@ -179,6 +202,8 @@ class rickTcal(QWidget):
             # 2초 뒤에 원래의 GIF로 되돌아가기 위해 타이머를 시작.
             self.bolddagu_timer.start()
             self.standing_timer.start()
+        if self.dragged_sado:
+            self.dragged_sado=False
 
     def changeStandingMotion(self):
         next_gif_path = random.choice(self.standing_gifs)
@@ -305,6 +330,8 @@ class MainWindow(QWidget):
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
+            head_x=sado_info['head_x'],
+            head_y=sado_info['head_y'],
             idle_len=sado_info["idle"],
         )
         player.show()
@@ -383,6 +410,8 @@ if __name__ == "__main__":
             sado_name=sado_name,
             bolddagu_x=sado_info["bolddagu_x"],
             bolddagu_y=sado_info["bolddagu_y"],
+            head_x=sado_info['head_x'],
+            head_y=sado_info['head_y'],
             idle_len=sado_info["idle"],
         )
         player.show()
